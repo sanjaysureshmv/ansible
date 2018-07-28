@@ -5,5 +5,4 @@ php_pack:
   - php
   - php-mysql
   - php-mcrpt
-  - libapache2-mod-php
-~                       
+  - libapache2-mod-php                   
