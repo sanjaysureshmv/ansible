@@ -1,0 +1,7 @@
+---
+apache: httpd
+webserver: httpd
+php_pack:
+  - php
+  - php-mysql
+
