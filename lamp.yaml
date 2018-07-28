@@ -1,0 +1,75 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install apache2
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+    - name: Install httpd
+      yum:
+        name: httpd
+        state: present
+      notify:
+        - restart httpd
+      when: ansible_os_family == "RedHat"
+
+
+    - name: Install php packages in Debian
+      apt:
+        name: "{{item}}"
+        state: present
+      with_items:
+          - php
+          - libapache2-mod-php
+          - php-mcrypt
+          - php-mysql
+      register: php_result
+      notify:
+        - restart apache2
+      when: php_result.changed
+      when: ansible_os_family == "Debian"
+
+
+    - name: Install php on redhat
+      yum:
+        name: "{{item}}"
+        state: present
+      with_items:
+        - php
+        - php-mysql
+      register: php_out
+      notify:
+        - restart httpd
+      when: php_out.changed
+      when: ansible_os_family == "RedHat"
+      
+      
+    - name: Update the priority of php files
+      lineinfile:
+        dest: /etc/apache2/mods-enabled/dir.conf
+        regexp: '^(.*)DirectoryIndex(.*)$'
+        line: DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
+      when: ansible_os_family == "Debian"
+
+    - name: Copy info.php file to the webserver
+      copy:
+        src: ./info.php
+        dest: /var/www/html/info.php
+        owner: root
+        group: root
+        mode: 0644
+        
+  handlers:
+    - name: restart apache2
+      systemd:
+        state: restarted
+        enabled: yes
+      when: ansible_os_family == "Debian"
+    - name: restart httpd
+      service:
+        state: restarted
+        enabled: yes
+      when: ansible_os_family == "RedHat"

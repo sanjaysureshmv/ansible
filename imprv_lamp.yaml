@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+  - name: Install webserver
+    package:
+      name: "{{apache}}"
+      state: present
+    notify:
+      - Restart webserver software
+
+  - name: Install php packages
+    package:
+      name: "{{item}}"
+      state: present
+    with_items:
+      - "{{php_pack}}"
+    notify:
+        - Restart webserver software
+        
+
+
+  - name: Copy info.php to the webservers
+    copy:
+      src: ./info.php
+      dest: /var/www/html
+      owner: root
+      group: root
+      mode: 0644
+
+  handlers: 
+    - name: Restart webserver software
+      systemd:
+        name: "{{webserver}}"
+        state: restarted
+        enabled: yes
