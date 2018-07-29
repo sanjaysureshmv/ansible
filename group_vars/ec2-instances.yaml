@@ -4,5 +4,5 @@ webserver: apache2
 php_pack:
   - php
   - php-mysql
-  - php-mcrpt
+  - php-mcrypt
   - libapache2-mod-php                   
