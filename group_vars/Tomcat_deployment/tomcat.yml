@@ -1,0 +1,82 @@
+---
+  - hosts: all
+    become: yes
+    vars:
+      - group_name: tomcat
+      - user_name: tomcat
+    tasks:
+      - name: Install java on ubuntu
+        apt:
+          update_cache: yes
+          name: default-jdk
+          state: present
+      - name: Create a group tomcat 
+        group:
+          name: {{group_name}}
+          state: present
+          
+      - name: Create a tomcat user if it does not exist and add to the tomcat group
+        user:
+          name: {{user_name}}
+          state: present
+          shell: /bin/false
+          create_home: True
+      - name: Create the directory for tomcat
+        file:
+          state: directory
+          dest: /opt/tomcat/apache-tomcat-8.5.32
+          group: {{group_name}}
+          recurse: yes
+
+     # - name: Download the tomcat binary to /opt/tomcat
+      #  get_url:
+       #   url: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
+        #  dest: /opt/tomcat
+
+      - name: Unzip the downloaded tomcat tar
+        unarchive:
+          src: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
+          dest: /opt/tomcat/apache-tomcat-8.5.32
+          remote_src: yes
+
+    #  - name: List the directories and store it to a value
+     #     command: "ls /opt/tomcat/apache-tomcat-8.5.32/conf"
+      #  register: dir_out
+
+      #- debug: var={{item}}
+      #  with_items: dir_out.stdout_lines
+
+      - name: change some files owner
+        file:
+          name: /opt/tomcat/apache-tomcat-8.5.32/conf
+          state: file
+          recurse: yes
+          mode: u=rwX,g=rX,o=rX
+      - name: Give execute permission to the conf directory
+        file: 
+          state: directory
+          dest: /opt/tomcat/apache-tomcat-8.5.32/conf
+          state: present
+          mode: g+x
+          
+      - name: Create a service file
+        copy:
+          src: ./tomcat.service
+          dest: /etc/systemd/system/tomcat.service
+        notify: 
+          - restart tomcat with daemon reload
+    handlers:
+      - name: restart tomcat with daemon reload
+        systemd:
+          state: restarted
+          enabled: yes
+          daemon_reload: yes
+
+
+      
+          
+
+
+     
+          
+      
