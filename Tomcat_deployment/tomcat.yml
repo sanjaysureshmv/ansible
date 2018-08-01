@@ -1,5 +1,5 @@
 ---
-  - hosts: all
+  - hosts: ec2-instances
     become: yes
     vars:
       - group_name: tomcat
@@ -12,12 +12,12 @@
           state: present
       - name: Create a group tomcat 
         group:
-          name: {{group_name}}
+          name: "{{ group_name }}"
           state: present
           
       - name: Create a tomcat user if it does not exist and add to the tomcat group
         user:
-          name: {{user_name}}
+          name: "{{ user_name }}"
           state: present
           shell: /bin/false
           create_home: True
@@ -25,7 +25,7 @@
         file:
           state: directory
           dest: /opt/tomcat/apache-tomcat-8.5.32
-          group: {{group_name}}
+          group: "{{ group_name }}"
           recurse: yes
 
      # - name: Download the tomcat binary to /opt/tomcat
@@ -49,14 +49,13 @@
       - name: change some files owner
         file:
           name: /opt/tomcat/apache-tomcat-8.5.32/conf
-          state: file
+          state: directory
           recurse: yes
           mode: u=rwX,g=rX,o=rX
       - name: Give execute permission to the conf directory
         file: 
           state: directory
           dest: /opt/tomcat/apache-tomcat-8.5.32/conf
-          state: present
           mode: g+x
           
       - name: Create a service file
@@ -68,6 +67,7 @@
     handlers:
       - name: restart tomcat with daemon reload
         systemd:
+          name: tomcat
           state: restarted
           enabled: yes
           daemon_reload: yes
