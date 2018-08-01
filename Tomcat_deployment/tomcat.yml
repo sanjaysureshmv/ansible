@@ -52,7 +52,7 @@
           name: /opt/tomcat/apache-tomcat-8.5.32/conf
           state: directory
           recurse: yes
-          mode: u=rwX,g=rX,o=rX
+          mode: g+r
 
       - name: Change owner of logs extra
         file:
