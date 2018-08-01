@@ -6,12 +6,12 @@ vars:
 
   - name: Copy static file to the server
     copy:
-      src: ./hello.txt
+      src: ./group_vars/hello.txt
       dest: /home/ubuntu
       mode: 077
   - name: Copy dynamic file to the server
     template:
-      src: ./hello.j2
+      src: ./group_vars/hello.j2
       dest: /home/ubuntu/dynamic.txt
       mode: 0777
 
