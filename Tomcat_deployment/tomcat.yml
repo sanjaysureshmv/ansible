@@ -21,12 +21,7 @@
           state: present
           shell: /bin/false
           create_home: True
-      - name: Create the directory for tomcat
-        file:
-          state: directory
-          dest: /opt/tomcat/apache-tomcat-8.5.32
-          group: {{group_name}}
-          recurse: yes
+      
 
      # - name: Download the tomcat binary to /opt/tomcat
       #  get_url:
@@ -36,8 +31,15 @@
       - name: Unzip the downloaded tomcat tar
         unarchive:
           src: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
-          dest: /opt/tomcat/apache-tomcat-8.5.32
+          dest: /opt/tomcat/
           remote_src: yes
+          
+      - name: Create the directory for tomcat
+        file:
+          state: directory
+          dest: /opt/tomcat/apache-tomcat-8.5.32
+          group: {{group_name}}
+          recurse: yes
 
     #  - name: List the directories and store it to a value
      #     command: "ls /opt/tomcat/apache-tomcat-8.5.32/conf"
@@ -49,7 +51,7 @@
       - name: change some files owner
         file:
           name: /opt/tomcat/apache-tomcat-8.5.32/conf
-          state: file
+          state: directory
           recurse: yes
           mode: u=rwX,g=rX,o=rX
       - name: Give execute permission to the conf directory
