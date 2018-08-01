@@ -1,0 +1,18 @@
+---
+hosts: all
+vars:
+  - myname: Template example
+  - taks:
+
+  - name: Copy static file to the server
+    copy:
+      src: ./hello.txt
+      dest: /home/ubuntu
+      mode: 077
+  - name: Copy dynamic file to the server
+    template:
+      src: ./hello.j2
+      dest: /home/ubuntu/dynamic.txt
+      mode: 0777
+
+
