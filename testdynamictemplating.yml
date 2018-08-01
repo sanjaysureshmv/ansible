@@ -2,8 +2,7 @@
 hosts: all
 vars:
   - myname: Template example
-  - taks:
-
+tasks:
   - name: Copy static file to the server
     copy:
       src: ./hello.txt
