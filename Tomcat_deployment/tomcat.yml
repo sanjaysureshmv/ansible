@@ -26,19 +26,20 @@
       #  get_url:
        #   url: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
         #  dest: /opt/tomcat
-
-      - name: Unzip the downloaded tomcat tar
-        unarchive:
-          src: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
-          dest: /opt/tomcat/
-          remote_src: yes
-          
+                
       - name: Create the directory for tomcat
         file:
           state: directory
           dest: /opt/tomcat/
           group: "{{group_name}}"        # Working fine
           recurse: yes
+
+      - name: Unzip the downloaded tomcat tar
+        unarchive:
+          src: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
+          dest: /opt/tomcat/
+          remote_src: yes
+
 
     #  - name: List the directories and store it to a value
      #     command: "ls /opt/tomcat/apache-tomcat-8.5.32/conf"
