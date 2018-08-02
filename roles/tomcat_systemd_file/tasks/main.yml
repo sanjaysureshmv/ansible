@@ -1,7 +1,7 @@
 ---
 - name: Create a service file
   copy:
-    src: ./tomcat.service
+    src: ./tomcat_service.j2
     dest: /etc/systemd/system/tomcat.service
   notify: 
     - restart tomcat with daemon reload
