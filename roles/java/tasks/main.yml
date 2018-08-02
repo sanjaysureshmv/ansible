@@ -4,3 +4,6 @@
     update_cache: yes
     name: default-jdk
     state: present 
+- name: get the JAVA_HOME environment variable dynamically
+  shell: update-java-alternatives -l | awk {'print $3'}
+  register: JAVA_HOME
