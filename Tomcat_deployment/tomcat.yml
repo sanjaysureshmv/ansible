@@ -87,6 +87,7 @@
           state: directory
           dest: /opt/tomcat/apache-tomcat-8.5.32/conf
           mode: g+x
+        
           
       - name: Create a service file
         copy:

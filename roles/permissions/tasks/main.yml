@@ -1,0 +1,58 @@
+---
+- name: Create a group tomcat 
+  group:
+    name: "{{ group_name }}"
+    state: present
+          
+- name: Create a tomcat user if it does not exist and add to the tomcat group
+  user:
+    name: "{{ user_name }}"
+    state: present
+    shell: /bin/false
+    create_home: True
+- name: Create the directory for tomcat
+  file:
+    state: directory
+    dest: /opt/tomcat/
+    group: "{{group_name}}"        # Working fine
+        #recurse: yes
+- name: Download the tomcat binary
+  get_url:
+    url: http://www-us.apache.org/dist/tomcat/tomcat-8/v8.5.32/bin/apache-tomcat-8.5.32.tar.gz
+    dest: /opt/tomcat/
+
+- name: Unzip the downloaded tomcat tar
+  unarchive:
+    src: /opt/tomcat/apache-tomcat-8.5.32.tar.gz
+    dest: /opt/tomcat/
+    remote_src: yes
+
+- name: Ensure the group is tomcat for the directories under tomcat
+  file:
+    state: directory
+    dest: /opt/tomcat/
+    group: "{{group_name}}"        #
+    recurse: yes
+- name: change some files owner  # not workinf as expected
+  file:
+    name: /opt/tomcat/apache-tomcat-8.5.32/conf
+    state: directory
+    recurse: yes
+    mode: g+r
+
+- name: Change owner of logs extra
+  file:
+    name: "{{item}}"
+    state: directory 
+    recurse: yes
+    owner: "{{ user_name }}"
+  with_items:
+    - /opt/tomcat/apache-tomcat-8.5.32/webapps
+    - /opt/tomcat/apache-tomcat-8.5.32/logs
+    - /opt/tomcat/apache-tomcat-8.5.32/temp
+    - /opt/tomcat/apache-tomcat-8.5.32/work
+- name: Give execute permission to the conf directory
+  file: 
+    state: directory
+    dest: /opt/tomcat/apache-tomcat-8.5.32/conf
+    mode: g+x
