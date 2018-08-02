@@ -1,6 +1,6 @@
 ---
 - name: Create a service file
-  copy:
+  template:
     src: ./tomcat_service.j2
     dest: /etc/systemd/system/tomcat.service
   notify: 
